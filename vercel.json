@@ -10,10 +10,6 @@
     {
       "source": "/submit",
       "destination": "app.js"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "public/$1"
     }
   ],
   "env": {

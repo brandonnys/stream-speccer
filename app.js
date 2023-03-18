@@ -12,10 +12,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
 app.get('/submit', async (req, res) => {
   const [systemData, speedData] = await Promise.all([collectSystemInformation(), performSpeedtest()]);
   saveToDatabase(systemData, speedData);
