@@ -5,9 +5,25 @@
   <title>System Information and Speed Test</title>
   <script>
     async function fetchData() {
-      const response = await fetch('/submit');
-      const data = await response.json();
-      displayData(data.systemData, data.speedData);
+      try {
+        setStatus('Fetching system information and performing speed test...');
+        const response = await fetch('/submit');
+    
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+    
+        const data = await response.json();
+        setStatus(''); // Clear status message
+        displayData(data.systemData, data.speedData);
+      } catch (error) {
+        setStatus(`Error: ${error.message}`);
+      }
+    }
+
+
+    function setStatus(message) {
+      document.getElementById('status').textContent = message;
     }
 
     function displayData(systemData, speedData) {
@@ -27,6 +43,7 @@
 <body>
   <h1>System Information and Speed Test</h1>
   <button onclick="fetchData()">Get System Information and Perform Speed Test</button>
+  <p id="status"></p>
   <div id="result"></div>
 </body>
 </html>
