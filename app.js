@@ -42,28 +42,18 @@ const performSpeedtest = async () => {
 };
 
 const saveToDatabase = async (systemData, speedData) => {
-  const db = new sqlite3.Database('./data.db');
-
-  db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS your_table_name (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cpu TEXT,
-      motherboard_vendor TEXT,
-      motherboard_model TEXT,
-      gpu_vendor TEXT,
-      gpu_model TEXT,
-      ram REAL,
-      download_speed REAL,
-      upload_speed REAL
-    )`);
-
-    const stmt = db.prepare(`INSERT INTO your_table_name (cpu, motherboard_vendor, motherboard_model, gpu_vendor, gpu_model, ram, download_speed, upload_speed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
-    stmt.run(systemData.cpuModel, systemData.motherboardVendor, systemData.motherboardModel, systemData.gpuVendor, systemData.gpuModel, systemData.ram, speedData.downloadSpeed, speedData.uploadSpeed);
-    stmt.finalize();
+  const connectionString = process.env.DATABASE_URL;
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
   });
 
-  db.close();
+  const query = `INSERT INTO your_table_name (cpu, motherboard_vendor, motherboard_model, gpu_vendor, gpu_model, ram, download_speed, upload_speed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+  const values = [systemData.cpuModel, systemData.motherboardVendor, systemData.motherboardModel, systemData.gpuVendor, systemData.gpuModel, systemData.ram, speedData.downloadSpeed, speedData.uploadSpeed];
+
+  await pool.query(query, values);
+  pool.end();
 };
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5432;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
