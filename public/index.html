@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Information and Speed Test</title>
+  <script>
+    async function fetchData() {
+      const response = await fetch('/submit');
+      const data = await response.json();
+      displayData(data.systemData, data.speedData);
+    }
+
+    function displayData(systemData, speedData) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <p>CPU Model: ${systemData.cpuModel}</p>
+        <p>Motherboard Vendor: ${systemData.motherboardVendor}</p>
+        <p>Motherboard Model: ${systemData.motherboardModel}</p>
+        <p>GPUVendor: ${systemData.gpuVendor}</p>
+        <p>GPU Model: ${systemData.gpuModel}</p>
+        <p>Total RAM: ${systemData.ram} GB</p>
+        <p>Download Speed: ${speedData.downloadSpeed} Mbps</p>
+        <p>Upload Speed: ${speedData.uploadSpeed} Mbps</p>`;
+    }
+  </script>
+</head>
+<body>
+  <h1>System Information and Speed Test</h1>
+  <button onclick="fetchData()">Get System Information and Perform Speed Test</button>
+  <div id="result"></div>
+</body>
+</html>
