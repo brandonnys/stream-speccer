@@ -19,12 +19,13 @@ app.get('/submit', async (req, res) => {
 
 const collectSystemInformation = async () => {
   const cpuData = await si.cpu();
+  const baseboardData = await si.baseboard(); // Add this line
   const gpuData = await si.graphics();
   const ramData = await si.mem();
 
   const cpuModel = cpuData.brand;
-  const motherboardVendor = cpuData.manufacturer;
-  const motherboardModel = cpuData.virtualization;
+  const motherboardVendor = baseboardData.manufacturer;
+  const motherboardModel = baseboardData.model; // Update this line
   const gpuVendor = gpuData.controllers[0].vendor;
   const gpuModel = gpuData.controllers[0].model;
   const ram = (ramData.total / (1024 ** 3)).toFixed(2);
