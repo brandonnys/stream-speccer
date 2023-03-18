@@ -6,12 +6,17 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/submit",
-      "destination": "app.js"
+     "src": "/submit",
+     "dest": "/app.js"
+   },
+   {
+     "src": "/(.*)",
+     "continue": true,
+     "dest": "/public/$1"
     }
-  ],
+],
   "env": {
     "DATABASE_URL": "@database_url"
   }
