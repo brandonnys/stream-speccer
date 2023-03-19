@@ -27,8 +27,8 @@ const collectSystemInformation = async () => {
   const cpuModel = cpuData.brand;
   const motherboardVendor = baseboardData.manufacturer;
   const motherboardModel = baseboardData.model;
-  const gpuVendor = gpuData.controllers[0].vendor;
-  const gpuModel = gpuData.controllers[0].model;
+  const gpuVendor = gpuData.controllers.length > 0 ? gpuData.controllers[0].vendor : 'Unknown';
+  const gpuModel = gpuData.controllers.length > 0 ? gpuData.controllers[0].model : 'Unknown';
   const ram = (ramData.total / (1024 ** 3)).toFixed(2);
 
   return { cpuModel, motherboardVendor, motherboardModel, gpuVendor, gpuModel, ram };

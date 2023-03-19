@@ -34,6 +34,16 @@
         <p>Download Speed: ${speedData.downloadSpeed} Mbps</p>
         <p>Upload Speed: ${speedData.uploadSpeed} Mbps</p>`;
     }
+
+    function displayStatus(message) {
+      const statusElement = document.getElementById('status');
+      if (statusElement) {
+        statusElement.textContent = message;
+      } else {
+        console.error('Status element not found');
+      }
+    }
+
   </script>
 </head>
 <body>
