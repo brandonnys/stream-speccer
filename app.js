@@ -1,3 +1,4 @@
+const { collectSystemInformation, performSpeedtest, saveToDatabase } = require('./app');
 const express = require('express');
 const si = require('systeminformation');
 const speedTest = require('speedtest-net');
@@ -5,29 +6,32 @@ const { Pool } = require('pg');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 
-const allowCors = (fn) => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  return await fn(req, res);
-};
+app.use(express.static('public'));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
-const handler = async (req, res) => {
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/submit', async (req, res) => {
   const [systemData, speedData] = await Promise.all([collectSystemInformation(), performSpeedtest()]);
   saveToDatabase(systemData, speedData);
   res.json({ systemData, speedData });
-};
-
-module.exports = allowCors(handler);
+});
 
 const collectSystemInformation = async () => {
   const cpuData = await si.cpu();
-  const baseboardData = await si.baseboard(); // Add this line
+  const baseboardData = await si.baseboard();
   const gpuData = await si.graphics();
   const ramData = await si.mem();
 
   const cpuModel = cpuData.brand;
   const motherboardVendor = baseboardData.manufacturer;
-  const motherboardModel = baseboardData.model; // Update this line
+  const motherboardModel = baseboardData.model;
   const gpuVendor = gpuData.controllers[0].vendor;
   const gpuModel = gpuData.controllers[0].model;
   const ram = (ramData.total / (1024 ** 3)).toFixed(2);
@@ -56,4 +60,13 @@ const saveToDatabase = async (systemData, speedData) => {
 
   await pool.query(query, values);
   pool.end();
+};
+
+const PORT = process.env.PORT || 5432;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+module.exports = {
+  collectSystemInformation,
+  performSpeedtest,
+  saveToDatabase,
 };

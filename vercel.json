@@ -2,22 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/submit.js",
+      "src": "app.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "submit.js",
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/submit",
-      "destination": "/api/submit"
+      "src": "/submit",
+      "dest": "/submit.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/public/$1"
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ],
   "env": {
     "DATABASE_URL": "@database_url"
   }
 }
-
