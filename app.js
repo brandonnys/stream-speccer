@@ -1,4 +1,3 @@
-const { collectSystemInformation, performSpeedtest, saveToDatabase } = require('./app');
 const express = require('express');
 const si = require('systeminformation');
 const speedTest = require('speedtest-net');
