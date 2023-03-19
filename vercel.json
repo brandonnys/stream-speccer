@@ -10,16 +10,16 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
-    {
-      "src": "/submit",
-      "dest": "/submit.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    }
-  ],
+"rewrites": [
+  {
+    "source": "/submit",
+    "destination": "/submit.js"
+  },
+  {
+    "source": "/(.*)",
+    "destination": "/public/$1"
+  }
+],
   "env": {
     "DATABASE_URL": "@database_url"
   }
