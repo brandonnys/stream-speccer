@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client System Information and Speed Test</title>
-    <script src="https://unpkg.com/speedtest-net@2.1.1"></script>
     <script>
         async function fetchData() {
-          const systemData = await collectSystemInformation(); // Add 'await' here
+          const systemData = await collectSystemInformation();
           const speedData = await performSpeedTest();
           const data = { systemData, speedData };
           console.log(data);
@@ -34,17 +33,17 @@
         }
 
         async function performSpeedTest() {
-          return new Promise((resolve, reject) => {
-            speedtest({ acceptLicense: true, acceptGdpr: true }, (error, data) => {
-              if (error) {
-                reject(error);
-              } else {
-                const downloadSpeed = (data.download.bandwidth / 125000).toFixed(2);
-                const uploadSpeed = (data.upload.bandwidth / 125000).toFixed(2);
-                resolve({ downloadSpeed, uploadSpeed });
-              }
-            });
-          });
+          const fileSizeInBytes = 10000000; // 10MB
+          const startTime = new Date().getTime();
+          await fetch('https://speed.hetzner.de/10MB.bin', { mode: 'no-cors' });
+          const endTime = new Date().getTime();
+
+          const durationInMilliseconds = endTime - startTime;
+          const durationInSeconds = durationInMilliseconds / 1000;
+          const speedInBytesPerSecond = fileSizeInBytes / durationInSeconds;
+          const speedInMegabitsPerSecond = (speedInBytesPerSecond * 8) / (1024 * 1024);
+
+          return { downloadSpeed: speedInMegabitsPerSecond.toFixed(2) };
         }
     </script>
 </head>
