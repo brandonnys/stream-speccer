@@ -5,18 +5,19 @@ const { Pool } = require('pg');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 
-app.use(express.static('public'));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+const allowCors = (fn) => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  return await fn(req, res);
+};
 
-app.get('/submit', async (req, res) => {
+const handler = async (req, res) => {
   const [systemData, speedData] = await Promise.all([collectSystemInformation(), performSpeedtest()]);
   saveToDatabase(systemData, speedData);
   res.json({ systemData, speedData });
-});
+};
+
+module.exports = allowCors(handler);
 
 const collectSystemInformation = async () => {
   const cpuData = await si.cpu();
@@ -56,6 +57,3 @@ const saveToDatabase = async (systemData, speedData) => {
   await pool.query(query, values);
   pool.end();
 };
-
-const PORT = process.env.PORT || 5432;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
